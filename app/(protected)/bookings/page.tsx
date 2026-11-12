@@ -63,7 +63,12 @@ function toBooking(
   }
 
   return {
-    id: record.id.slice(0, 8).toUpperCase(),
+    // Full UUID for database operations
+    id: record.id,
+
+    // Short ID for dashboard display
+    displayId: record.id.slice(0, 8).toUpperCase(),
+
     guest: guest
         ? `${guest.first_name} ${guest.last_name}`
         : "Guest",
@@ -251,7 +256,6 @@ export default function BookingsPage() {
           setTotal(0);
           setLoading(false);
         }
-
         return;
       }
 
@@ -294,7 +298,6 @@ export default function BookingsPage() {
           setBookings([]);
           setLoading(false);
         }
-
         return;
       }
 
@@ -343,7 +346,7 @@ export default function BookingsPage() {
     };
   }, [page, statusFilter, guestFilterId, supabase, reloadKey]);
 
-  // Confirm a pending booking
+  // Confirm booking using the full UUID
   async function confirmBooking(bookingId: string) {
     if (confirmingBookingId) return;
 
@@ -373,6 +376,7 @@ export default function BookingsPage() {
       window.alert(
           "This booking is no longer pending. Please refresh the page."
       );
+
       setConfirmingBookingId(null);
       setReloadKey((key) => key + 1);
       return;
@@ -392,6 +396,7 @@ export default function BookingsPage() {
           booking.guest,
           booking.email,
           booking.id,
+          booking.displayId,
           booking.treatment,
         ].some((value) => value.toLowerCase().includes(query))
     );
@@ -410,13 +415,13 @@ export default function BookingsPage() {
 
   return (
       <div className="min-h-[calc(100vh-76px)] bg-purana-cream p-4 sm:p-6 lg:p-8">
+
         {/* Header */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="font-serif text-2xl font-semibold text-purana-green sm:text-3xl">
               Bookings
             </h1>
-
             <p className="mt-1 text-sm text-purana-brown/60">
               Manage appointments, reservations and guest bookings.
             </p>
@@ -446,7 +451,6 @@ export default function BookingsPage() {
                 <p className="text-sm font-medium text-purana-brown/60">
                   {label}
                 </p>
-
                 <p className={`mt-2 text-2xl font-semibold ${color}`}>
                   {value}
                 </p>
@@ -461,7 +465,6 @@ export default function BookingsPage() {
               {guestFilterId && (
                   <div className="flex items-center justify-between rounded-lg bg-purana-green/5 px-3 py-2 text-xs text-purana-green">
                     <span>Showing bookings for selected guest</span>
-
                     <button
                         type="button"
                         onClick={clearGuestFilter}
@@ -500,7 +503,7 @@ export default function BookingsPage() {
           </div>
         </div>
 
-        {/* Bookings table */}
+        {/* Desktop table */}
         <div className="overflow-hidden rounded-2xl border border-purana-brown/10 bg-white shadow-sm">
           <div className="hidden overflow-x-auto lg:block">
             <table className="w-full min-w-[1000px]">
@@ -534,7 +537,7 @@ export default function BookingsPage() {
                   >
                     <td className="px-5 py-4">
                       <p className="text-sm font-semibold text-purana-green">
-                        {booking.id}
+                        {booking.displayId}
                       </p>
                     </td>
 
@@ -542,7 +545,6 @@ export default function BookingsPage() {
                       <p className="text-sm font-semibold text-purana-brown">
                         {booking.guest}
                       </p>
-
                       <p className="mt-1 text-xs text-purana-brown/50">
                         {booking.email}
                       </p>
@@ -552,7 +554,6 @@ export default function BookingsPage() {
                       <p className="text-sm font-medium text-purana-brown">
                         {booking.treatment}
                       </p>
-
                       <p className="mt-1 text-xs text-purana-brown/50">
                         {booking.duration}
                       </p>
@@ -562,7 +563,6 @@ export default function BookingsPage() {
                       <p className="text-sm font-medium text-purana-brown">
                         {booking.date}
                       </p>
-
                       <p className="mt-1 text-xs text-purana-brown/50">
                         {booking.time}
                       </p>
@@ -616,20 +616,18 @@ export default function BookingsPage() {
             </table>
           </div>
 
-          {/* Mobile bookings */}
+          {/* Mobile cards */}
           <div className="divide-y divide-purana-brown/10 lg:hidden">
             {filteredBookings.map((booking) => (
                 <article key={booking.id} className="p-4 sm:p-5">
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-purana-green">
-                        {booking.id}
+                        {booking.displayId}
                       </p>
-
                       <p className="mt-1 text-sm font-semibold text-purana-brown">
                         {booking.guest}
                       </p>
-
                       <p className="text-xs text-purana-brown/50">
                         {booking.email}
                       </p>
@@ -717,7 +715,6 @@ export default function BookingsPage() {
                 <h3 className="text-sm font-semibold text-purana-brown">
                   No bookings found
                 </h3>
-
                 <p className="mt-1 text-sm text-purana-brown/50">
                   Try changing your search or status filter.
                 </p>
@@ -728,8 +725,7 @@ export default function BookingsPage() {
         {/* Pagination */}
         <div className="mt-4 flex flex-col gap-3 text-xs text-purana-brown/60 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            Showing{" "}
-            {total === 0 ? 0 : page * PAGE_SIZE + 1}–
+            Showing {total === 0 ? 0 : page * PAGE_SIZE + 1}–
             {Math.min((page + 1) * PAGE_SIZE, total)} of {total} bookings
             {search ? " on this page matching search" : ""}
           </p>

@@ -41,7 +41,24 @@ export default function AddTreatment({ onClose, onSaved, treatment, categories }
     <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-5"><div><h2 className="text-xl font-semibold text-purana-brown">{treatment ? "Edit Treatment" : "Add Treatment"}</h2><p className="mt-1 text-sm text-gray-500">Treatment details and booking availability.</p></div><button type="button" onClick={onClose} aria-label="Close" className="rounded-lg p-2 text-gray-500 hover:bg-purana-soft"><X size={20} /></button></div>
     <div className="space-y-4 p-6">
       <label className="block text-sm font-medium text-gray-700">Name<input required name="name" defaultValue={treatment?.name} className={`${inputClass} mt-2`} /></label>
-      <div className="grid gap-4 sm:grid-cols-2"><label className="block text-sm font-medium text-gray-700">Category<input required list="treatment-categories" name="category" defaultValue={treatment?.category} className={`${inputClass} mt-2`} /><datalist id="treatment-categories">{categories.map((category) => <option key={category} value={category} />)}</datalist></label><label className="block text-sm font-medium text-gray-700">Duration (minutes)<input required min="1" step="1" type="number" name="duration_minutes" defaultValue={Number.parseInt(treatment?.duration ?? "", 10) || ""} className={`${inputClass} mt-2`} /></label></div>
+      <div className="grid gap-4 sm:grid-cols-2"><label className="block text-sm font-medium text-gray-700">
+        Category
+        <select
+            required
+            name="category"
+            defaultValue={treatment?.category ?? ""}
+            className={`${inputClass} mt-2`}
+        >
+          <option value="" disabled>
+            Select a category
+          </option>
+          <option value="Abhyanga Massages">Abhyanga Massages</option>
+          <option value="Special Therapies">Special Therapies</option>
+          <option value="Aroma Rituals">Aroma Rituals</option>
+          <option value="Facial Treatments">Facial Treatments</option>
+          <option value="Day Packages">Day Packages</option>
+        </select>
+      </label><label className="block text-sm font-medium text-gray-700">Duration (minutes)<input required min="1" step="1" type="number" name="duration_minutes" defaultValue={Number.parseInt(treatment?.duration ?? "", 10) || ""} className={`${inputClass} mt-2`} /></label></div>
       <div className="grid gap-4 sm:grid-cols-2"><label className="block text-sm font-medium text-gray-700">Price<input required min="0" step="0.01" type="number" name="price" defaultValue={numericPrice} className={`${inputClass} mt-2`} /></label><label className="block text-sm font-medium text-gray-700">Currency<input required minLength={3} maxLength={3} name="currency" defaultValue={treatment?.currency ?? "EUR"} className={`${inputClass} mt-2 uppercase`} /></label></div>
       <label className="block text-sm font-medium text-gray-700">Description<textarea name="description" rows={4} defaultValue={treatment?.description === "—" ? "" : treatment?.description} className={`${inputClass} mt-2`} /></label>
       <label className="block text-sm font-medium text-gray-700">Internal notes<textarea name="notes" rows={3} defaultValue={treatment?.notes} className={`${inputClass} mt-2`} /></label>
