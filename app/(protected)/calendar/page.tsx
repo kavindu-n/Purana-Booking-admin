@@ -14,7 +14,7 @@ type WorkingHour = { therapist_id: string; day_of_week: number; start_time: stri
 type BlockRecord = { id: string; therapist_id: string; start_at: string; end_at: string; reason: string | null };
 
 function therapistLabel(row: Record<string, unknown>) {
-  const firstAndLast = [row.first_name, row.last_name].filter((part): part is string => typeof part === "string" && part.trim()).join(" ");
+  const firstAndLast = [row.first_name, row.last_name].filter((part): part is string => typeof part === "string" && part.trim().length > 0).join(" ");
   const label = row.full_name ?? row.name ?? row.display_name ?? firstAndLast ?? row.first_name;
   return typeof label === "string" && label.trim() ? label : `Therapist ${String(row.id).slice(0, 8)}`;
 }

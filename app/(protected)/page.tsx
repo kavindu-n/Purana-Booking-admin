@@ -101,7 +101,7 @@ export default async function Dashboard() {
     supabase.from("bookings").select(bookingSelection).order("created_at", { ascending: false }).limit(5),
     supabase
       .from("bookings")
-      .select("status, booking_items(unit_price)")
+      .select("status, booking_items(unit_price, currency)")
       .gte("start_at", monthStart.toISOString())
       .lt("start_at", new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString())
       .neq("status", "cancelled"),
