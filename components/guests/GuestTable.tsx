@@ -36,7 +36,7 @@ function getTypeStyle(type: Guest["type"]) {
 }
 
 function getStatusStyle(status: Guest["status"]) {
-  if (status === "Active") {
+  if (status === "With bookings") {
     return "bg-green-100 text-green-700";
   }
 
